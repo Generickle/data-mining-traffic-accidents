@@ -354,180 +354,58 @@ ggplot(data_2022_vehicle_subset_transformed, aes(x = tipo_veh , y = tipo_eve , c
 # Classification
 
 # Building trees
-general_time_tree <- rpart(tipo_eve ~ mes_ocu + día_ocu + hora_ocu + día_sem_ocu + fall_les + int_o_noint,
-                           data = data_2022_subset_transformed,
-                           method = "class")
 
-general_location_tree <- rpart(tipo_eve ~ depto_ocu + mupio_ocu + zona_ocu + fall_les + int_o_noint,
-                               data = data_2022_subset_transformed,
-                               method = "class")
-
-general_people_tree <- rpart(tipo_eve ~ sexo_per + edad_per + mayor_menor + fall_les + int_o_noint,
+type_event_tree <- rpart(tipo_eve ~ tipo_veh + depto_ocu + mupio_ocu + fall_les + int_o_noint,
                              data = data_2022_subset_transformed,
                              method = "class")
 
-general_vehicle_tree <- rpart(tipo_eve ~ tipo_veh + marca_veh + color_veh + modelo_veh + fall_les + int_o_noint,
-                              data = data_2022_subset_transformed,
-                              method = "class")
-
-time_tree <- rpart(tipo_eve ~ mes_ocu + día_ocu + hora_ocu + día_sem_ocu + fall_les + int_o_noint,
-                   data = data_2022_time_subset_transformed,
-                   method = "class")
-
-location_tree <- rpart(tipo_eve ~ depto_ocu + mupio_ocu + zona_ocu + fall_les + int_o_noint,
-                   data = data_2022_location_subset_transformed,
-                   method = "class")
-
-people_tree <- rpart(tipo_eve ~ sexo_per + edad_per + mayor_menor + fall_les + int_o_noint,
-                   data = data_2022_people_subset_transformed,
-                   method = "class")
-
-vehicle_tree <- rpart(tipo_eve ~ tipo_veh + marca_veh + color_veh + modelo_veh + fall_les + int_o_noint,
-                   data = data_2022_vehicle_subset_transformed,
-                   method = "class")
-
-# Construir el modelo de árbol de decisiones
-modelo_arbol_tiempo <- rpart(fall_les ~ tipo_veh + sexo_per + depto_ocu,
-                             data = data_2022_subset_transformed)
-
-# Visualizar el árbol de decisiones
-rpart.plot(modelo_arbol_tiempo,
-           box.palette = "RdBu",
-           shadow.col = "gray",
-           nn = TRUE)
-
-test_tree <- rpart(sexo_per ~ edad_per,
-                           data = data_2022_subset_transformed,
-                           method = "class")
+genre_tree <- rpart(sexo_per ~ tipo_eve + tipo_veh + depto_ocu + mupio_ocu + fall_les + int_o_noint,
+                             data = data_2022_subset_transformed,
+                             method = "class")
 
 # Graphic tree
-rpart.plot(test_tree,
+
+rpart.plot(type_event_tree,
            type = 2,
            extra = 0,  
            under = TRUE,  
            fallen.leaves = TRUE,
            box.palette = "BuGn",  
-           main = "Test 2",
+           main = "Tipo de evento dado el vehículo, la ubicación y el diagnóstico",
            cex = 0.45)
 
-rpart.plot(general_time_tree,
+rpart.plot(genre_tree,
            type = 2,
            extra = 0,  
            under = TRUE,  
            fallen.leaves = TRUE,
            box.palette = "BuGn",  
-           main = "Tipo de evento dada la fecha, hora y diagnóstico",
-           cex = 0.45)
-
-rpart.plot(general_location_tree,
-           type = 2,
-           extra = 0,  
-           under = TRUE,  
-           fallen.leaves = TRUE,
-           box.palette = "BuGn",  
-           main = "Tipo de evento dada la ubicación y diagnóstico",
-           cex = 0.45)
-
-rpart.plot(general_people_tree,
-           type = 2,
-           extra = 0,  
-           under = TRUE,  
-           fallen.leaves = TRUE,
-           box.palette = "BuGn",  
-           main = "Tipo de evento dado el género, edad y diagnóstico",
-           cex = 0.45)
-
-rpart.plot(general_vehicle_tree,
-           type = 2,
-           extra = 0,  
-           under = TRUE,  
-           fallen.leaves = TRUE,
-           box.palette = "BuGn",  
-           main = "Tipo de evento dado el vehículo y diagnóstico",
-           cex = 0.45)
-
-rpart.plot(time_tree,
-           type = 2,
-           extra = 0,  
-           under = TRUE,  
-           fallen.leaves = TRUE,
-           box.palette = "BuGn",  
-           main = "Tipo de evento dada la fecha, hora y diagnóstico",
-           cex = 0.45)
-
-rpart.plot(location_tree,
-           type = 2,
-           extra = 0,  
-           under = TRUE,  
-           fallen.leaves = TRUE,
-           box.palette = "BuGn",  
-           main = "Tipo de evento dada la ubicación y diagnóstico",
-           cex = 0.45)
-
-rpart.plot(people_tree,
-           type = 2,
-           extra = 0,  
-           under = TRUE,  
-           fallen.leaves = TRUE,
-           box.palette = "BuGn",  
-           main = "Tipo de evento dado el género, edad y diagnóstico",
-           cex = 0.45)
-
-rpart.plot(vehicle_tree,
-           type = 2,
-           extra = 0,  
-           under = TRUE,  
-           fallen.leaves = TRUE,
-           box.palette = "BuGn",  
-           main = "Tipo de evento dado el vehículo y diagnóstico",
+           main = "Género del involucrado dada la ubicación y diagnóstico",
            cex = 0.45)
 
 # Creating nodes to evaluate
-time_data <- data.frame(
-  mes_ocu = c(1),
-  día_ocu = c(1),
-  hora_ocu = c(1),
-  día_sem_ocu = c(1),
-  fall_les = c(1),
-  int_o_noint = c(1)
+
+type_event_data <- data.frame(
+  tipo_veh=c(4), # Motorcycle
+  depto_ocu=c(1), # Guatemala
+  mupio_ocu=c(101), # Guatemala
+  fall_les = c(1), # Deceased
+  int_o_noint = c(2) # Hospitalized
 )
 
-location_data <- data.frame(
-  depto_ocu=c(1),
-  fall_les = c(1),
-  int_o_noint = c(1)
-)
-
-people_data <- data.frame(
-  sexo_per=c(1),
-  fall_les = c(1),
-  int_o_noint = c(1)
-)
-
-vehicle_data <- data.frame(
-  depto_ocu=c(1),
-  fall_les = c(1),
-  int_o_noint = c(1)
+genre_data <- data.frame(
+  tipo_eve=c(2), # Crash
+  tipo_veh=c(4), # Motorcycle
+  depto_ocu=c(1), # Guatemala
+  mupio_ocu=c(101), # Guatemala
+  fall_les = c(1), # Deceased
+  int_o_noint = c(2) # Hospitalized
 )
 
 # Prediction
-general_time_prediction <- predict(general_time_tree, new_data, type ="class")
-general_location_prediction <- predict(general_location_tree, new_data, type ="class")
-general_people_prediction <- predict(general_people_tree, new_data, type ="class")
-general_vehicle_prediction <- predict(general_vehicle_tree, new_data, type ="class")
-
-time_prediction <- predict(time_tree, new_data, type ="class")
-location_prediction <- predict(location_tree, new_data, type ="class")
-people_prediction <- predict(people_tree, new_data, type ="class")
-vehicle_prediction <- predict(vehicle_tree, new_data, type ="class")
+type_event_prediction <- predict(type_event_tree, type_event_data, type ="class")
+genre_prediction <- predict(genre_tree, genre_data, type ="class")
 
 # Show prediction
-print(general_time_prediction)
-print(general_location_prediction)
-print(general_people_prediction)
-print(general_vehicle_prediction)
-
-print(time_prediction)
-print(location_prediction)
-print(people_prediction)
-print(vehicle_prediction)
+print(type_event_prediction)
+print(genre_prediction)
