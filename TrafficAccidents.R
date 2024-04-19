@@ -1,9 +1,17 @@
 # Adding libraries
 install.packages("readxl")
 install.packages("haven")
+install.packages("arules")
+install.packages("ggplot2")
+install.packages("rpart")
+install.packages("rpart.plot")
 
 library(readxl)
 library(haven)
+library(arules)
+library(ggplot2)
+library(rpart)
+library(rpart.plot)
 
 # Get current working directory
 getwd()  
