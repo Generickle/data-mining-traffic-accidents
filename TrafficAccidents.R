@@ -276,6 +276,12 @@ str(data_2022_subset_transformed)
 # Remove N/A records
 data_2022_subset_transformed <- na.omit(data_2022_subset_transformed)
 
+# Filter data
+data_2022_subset_transformed <- data_2022_subset_transformed[data_2022_subset_transformed$tipo_eve != 99, ]
+data_2022_subset_transformed <- data_2022_subset_transformed[data_2022_subset_transformed$zona_ocu != "Ignorado", ]
+data_2022_subset_transformed <- data_2022_subset_transformed[data_2022_subset_transformed$edad_per != "Ignorada", ]
+data_2022_subset_transformed <- data_2022_subset_transformed[data_2022_subset_transformed$modelo_veh != "Ignorado", ]
+
 # Select specific columns from transformed dataset
 data_2022_time_subset_transformed <- data_2022_subset_transformed[, c("mes_ocu", "día_ocu", "hora_ocu", "día_sem_ocu",
                                                                   "tipo_eve", "fall_les", "int_o_noint")]
@@ -289,21 +295,38 @@ data_2022_people_subset_transformed <- data_2022_subset_transformed[, c("sexo_pe
 data_2022_vehicle_subset_transformed <- data_2022_subset_transformed[, c("tipo_veh", "marca_veh", "color_veh", "modelo_veh", 
                                                                     "tipo_eve", "fall_les", "int_o_noint")]
 
-# Time cluster
-
-# Filter data
-data_2022_time_subset_transformed <- data_2022_time_subset_transformed[data_2022_time_subset_transformed$tipo_eve != 99, ]
-data_2022_location_subset_transformed <- data_2022_location_subset_transformed[data_2022_location_subset_transformed$zona_ocu != "Ignorado", ]
-data_2022_people_subset_transformed <- data_2022_people_subset_transformed[data_2022_people_subset_transformed$edad_per != "Ignorada", ]
-data_2022_vehicle_subset_transformed <- data_2022_vehicle_subset_transformed[data_2022_vehicle_subset_transformed$modelo_veh != "Ignorado", ]
-
 # Apply K-means algorithm
+clusters <- kmeans(data_2022_subset_transformed, centers = 2)
 time_clusters <- kmeans(data_2022_time_subset_transformed, centers = 2)
 location_clusters <- kmeans(data_2022_location_subset_transformed, centers = 2)
 people_clusters <- kmeans(data_2022_people_subset_transformed, centers = 2)
 vehicle_clusters <- kmeans(data_2022_vehicle_subset_transformed, centers = 2)
 
 # Graphic clusters
+ggplot(data_2022_subset_transformed, aes(x = mes_ocu , y = tipo_eve , color = as.factor(clusters$cluster))) +
+  geom_point() + 
+  geom_point(data = as.data.frame(clusters$centers), aes(x = mes_ocu, y = tipo_eve), color = "black", size = 4, shape = 17) +
+  labs(title = "Mes del accidente vs tipo de evento") +
+  theme_minimal()
+
+ggplot(data_2022_subset_transformed, aes(x = depto_ocu , y = tipo_eve , color = as.factor(clusters$cluster))) +
+  geom_point() + 
+  geom_point(data = as.data.frame(clusters$centers), aes(x = depto_ocu, y = tipo_eve), color = "black", size = 4, shape = 17) +
+  labs(title = "Departamento del accidente vs tipo de evento") +
+  theme_minimal()
+
+ggplot(data_2022_subset_transformed, aes(x = sexo_per , y = tipo_eve , color = as.factor(clusters$cluster))) +
+  geom_point() + 
+  geom_point(data = as.data.frame(clusters$centers), aes(x = sexo_per, y = tipo_eve), color = "black", size = 4, shape = 17) +
+  labs(title = "Género del involucrado vs tipo de evento") +
+  theme_minimal()
+
+ggplot(data_2022_subset_transformed, aes(x = tipo_veh , y = tipo_eve , color = as.factor(clusters$cluster))) +
+  geom_point() + 
+  geom_point(data = as.data.frame(clusters$centers), aes(x = tipo_veh, y = tipo_eve), color = "black", size = 4, shape = 17) +
+  labs(title = "Tipo de vehículo vs tipo de evento") +
+  theme_minimal()
+
 ggplot(data_2022_time_subset_transformed, aes(x = mes_ocu , y = tipo_eve , color = as.factor(time_clusters$cluster))) +
   geom_point() + 
   geom_point(data = as.data.frame(time_clusters$centers), aes(x = mes_ocu, y = tipo_eve), color = "black", size = 4, shape = 17) +
