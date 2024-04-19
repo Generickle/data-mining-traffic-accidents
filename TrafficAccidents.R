@@ -40,6 +40,7 @@ data_sav_5 <- read_sav("data/LWRcgzU2wzY2XMCyCmupjEFTYoSZiWGy.sav")
 data_sav_6 <- read_sav("data/xpN37xrHYYECLYQyVq7EiklsaibU3DM0.sav")
 
 # Explore data
+head(data_2015)
 head(data_2016)
 head(data_2017)
 head(data_2018)
@@ -53,3 +54,37 @@ head(data_sav_2)
 head(data_sav_3)
 head(data_sav_4)
 head(data_sav_5)
+
+# Select specific columns from dataset
+data_2022_subset <- data_2022[, c("mes_ocu", "día_ocu", "hora_ocu", "día_sem_ocu",
+                              "depto_ocu", "mupio_ocu", "zona_ocu", 
+                              "sexo_per", "edad_per", "mayor_menor",
+                              "tipo_veh", "marca_veh", "color_veh", "modelo_veh", 
+                              "tipo_eve", "fall_les", "int_o_noint")]
+
+data_2022_time_subset <- data_2022[, c("mes_ocu", "día_ocu", "hora_ocu", "día_sem_ocu",
+                                       "tipo_eve", "fall_les", "int_o_noint")]
+
+data_2022_location_subset <- data_2022[, c("depto_ocu", "mupio_ocu", "zona_ocu", 
+                                       "tipo_eve", "fall_les", "int_o_noint")]
+
+data_2022_people_subset <- data_2022[, c("sexo_per", "edad_per", "mayor_menor",
+                                       "tipo_eve", "fall_les", "int_o_noint")]
+
+data_2022_vehicle_subset <- data_2022[, c("tipo_veh", "marca_veh", "color_veh", "modelo_veh", 
+                                       "tipo_eve", "fall_les", "int_o_noint")]
+
+# Filter data
+data_2022_location_subset_filtered <- data_2022_location_subset[data_2022_location_subset$depto_ocu == "Chiquimula", ]
+
+# Apply Apriori algorithm
+time_rules <- apriori(data_2022_time_subset, parameter = list(support = 0.1, confidence = 0.5))
+location_rules <- apriori(data_2022_location_subset_filtered, parameter = list(support = 0.1, confidence = 0.5))
+people_rules <- apriori(data_2022_people_subset, parameter = list(support = 0.1, confidence = 0.5))
+vehicle_rules <- apriori(data_2022_vehicle_subset, parameter = list(support = 0.1, confidence = 0.5))
+
+# Show rules
+inspect(time_rules)
+inspect(location_rules)
+inspect(people_rules)
+inspect(vehicle_rules)
