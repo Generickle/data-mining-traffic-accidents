@@ -1,7 +1,5 @@
 # Análisis de accidentes de tránsito en Guatemala durante el 2022
 
-## Introducción
-
 Este proyecto tiene como objetivo analizar datos de accidentes de tránsito en Guatemala y extraer ideas valiosas utilizando técnicas de minería de datos. El análisis incluye explorar patrones, asociaciones y grupos en los datos para comprender los factores que contribuyen a los accidentes de tránsito y proponer posibles soluciones para mitigar riesgos y mejorar la seguridad vial.
 
 Para ejecutar este proyecto, sigue estos pasos:
