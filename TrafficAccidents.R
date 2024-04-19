@@ -350,3 +350,184 @@ ggplot(data_2022_vehicle_subset_transformed, aes(x = tipo_veh , y = tipo_eve , c
   geom_point(data = as.data.frame(vehicle_clusters$centers), aes(x = tipo_veh, y = tipo_eve), color = "black", size = 4, shape = 17) +
   labs(title = "Tipo de vehículo vs tipo de evento") +
   theme_minimal()
+
+# Classification
+
+# Building trees
+general_time_tree <- rpart(tipo_eve ~ mes_ocu + día_ocu + hora_ocu + día_sem_ocu + fall_les + int_o_noint,
+                           data = data_2022_subset_transformed,
+                           method = "class")
+
+general_location_tree <- rpart(tipo_eve ~ depto_ocu + mupio_ocu + zona_ocu + fall_les + int_o_noint,
+                               data = data_2022_subset_transformed,
+                               method = "class")
+
+general_people_tree <- rpart(tipo_eve ~ sexo_per + edad_per + mayor_menor + fall_les + int_o_noint,
+                             data = data_2022_subset_transformed,
+                             method = "class")
+
+general_vehicle_tree <- rpart(tipo_eve ~ tipo_veh + marca_veh + color_veh + modelo_veh + fall_les + int_o_noint,
+                              data = data_2022_subset_transformed,
+                              method = "class")
+
+time_tree <- rpart(tipo_eve ~ mes_ocu + día_ocu + hora_ocu + día_sem_ocu + fall_les + int_o_noint,
+                   data = data_2022_time_subset_transformed,
+                   method = "class")
+
+location_tree <- rpart(tipo_eve ~ depto_ocu + mupio_ocu + zona_ocu + fall_les + int_o_noint,
+                   data = data_2022_location_subset_transformed,
+                   method = "class")
+
+people_tree <- rpart(tipo_eve ~ sexo_per + edad_per + mayor_menor + fall_les + int_o_noint,
+                   data = data_2022_people_subset_transformed,
+                   method = "class")
+
+vehicle_tree <- rpart(tipo_eve ~ tipo_veh + marca_veh + color_veh + modelo_veh + fall_les + int_o_noint,
+                   data = data_2022_vehicle_subset_transformed,
+                   method = "class")
+
+# Construir el modelo de árbol de decisiones
+modelo_arbol_tiempo <- rpart(fall_les ~ tipo_veh + sexo_per + depto_ocu,
+                             data = data_2022_subset_transformed)
+
+# Visualizar el árbol de decisiones
+rpart.plot(modelo_arbol_tiempo,
+           box.palette = "RdBu",
+           shadow.col = "gray",
+           nn = TRUE)
+
+test_tree <- rpart(sexo_per ~ edad_per,
+                           data = data_2022_subset_transformed,
+                           method = "class")
+
+# Graphic tree
+rpart.plot(test_tree,
+           type = 2,
+           extra = 0,  
+           under = TRUE,  
+           fallen.leaves = TRUE,
+           box.palette = "BuGn",  
+           main = "Test 2",
+           cex = 0.45)
+
+rpart.plot(general_time_tree,
+           type = 2,
+           extra = 0,  
+           under = TRUE,  
+           fallen.leaves = TRUE,
+           box.palette = "BuGn",  
+           main = "Tipo de evento dada la fecha, hora y diagnóstico",
+           cex = 0.45)
+
+rpart.plot(general_location_tree,
+           type = 2,
+           extra = 0,  
+           under = TRUE,  
+           fallen.leaves = TRUE,
+           box.palette = "BuGn",  
+           main = "Tipo de evento dada la ubicación y diagnóstico",
+           cex = 0.45)
+
+rpart.plot(general_people_tree,
+           type = 2,
+           extra = 0,  
+           under = TRUE,  
+           fallen.leaves = TRUE,
+           box.palette = "BuGn",  
+           main = "Tipo de evento dado el género, edad y diagnóstico",
+           cex = 0.45)
+
+rpart.plot(general_vehicle_tree,
+           type = 2,
+           extra = 0,  
+           under = TRUE,  
+           fallen.leaves = TRUE,
+           box.palette = "BuGn",  
+           main = "Tipo de evento dado el vehículo y diagnóstico",
+           cex = 0.45)
+
+rpart.plot(time_tree,
+           type = 2,
+           extra = 0,  
+           under = TRUE,  
+           fallen.leaves = TRUE,
+           box.palette = "BuGn",  
+           main = "Tipo de evento dada la fecha, hora y diagnóstico",
+           cex = 0.45)
+
+rpart.plot(location_tree,
+           type = 2,
+           extra = 0,  
+           under = TRUE,  
+           fallen.leaves = TRUE,
+           box.palette = "BuGn",  
+           main = "Tipo de evento dada la ubicación y diagnóstico",
+           cex = 0.45)
+
+rpart.plot(people_tree,
+           type = 2,
+           extra = 0,  
+           under = TRUE,  
+           fallen.leaves = TRUE,
+           box.palette = "BuGn",  
+           main = "Tipo de evento dado el género, edad y diagnóstico",
+           cex = 0.45)
+
+rpart.plot(vehicle_tree,
+           type = 2,
+           extra = 0,  
+           under = TRUE,  
+           fallen.leaves = TRUE,
+           box.palette = "BuGn",  
+           main = "Tipo de evento dado el vehículo y diagnóstico",
+           cex = 0.45)
+
+# Creating nodes to evaluate
+time_data <- data.frame(
+  mes_ocu = c(1),
+  día_ocu = c(1),
+  hora_ocu = c(1),
+  día_sem_ocu = c(1),
+  fall_les = c(1),
+  int_o_noint = c(1)
+)
+
+location_data <- data.frame(
+  depto_ocu=c(1),
+  fall_les = c(1),
+  int_o_noint = c(1)
+)
+
+people_data <- data.frame(
+  sexo_per=c(1),
+  fall_les = c(1),
+  int_o_noint = c(1)
+)
+
+vehicle_data <- data.frame(
+  depto_ocu=c(1),
+  fall_les = c(1),
+  int_o_noint = c(1)
+)
+
+# Prediction
+general_time_prediction <- predict(general_time_tree, new_data, type ="class")
+general_location_prediction <- predict(general_location_tree, new_data, type ="class")
+general_people_prediction <- predict(general_people_tree, new_data, type ="class")
+general_vehicle_prediction <- predict(general_vehicle_tree, new_data, type ="class")
+
+time_prediction <- predict(time_tree, new_data, type ="class")
+location_prediction <- predict(location_tree, new_data, type ="class")
+people_prediction <- predict(people_tree, new_data, type ="class")
+vehicle_prediction <- predict(vehicle_tree, new_data, type ="class")
+
+# Show prediction
+print(general_time_prediction)
+print(general_location_prediction)
+print(general_people_prediction)
+print(general_vehicle_prediction)
+
+print(time_prediction)
+print(location_prediction)
+print(people_prediction)
+print(vehicle_prediction)
